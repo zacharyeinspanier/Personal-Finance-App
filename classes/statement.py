@@ -4,12 +4,13 @@ import random
 
 class statement:
 
-    def __init__(self, statementName, transactions, totalWithdraw, totalDeposit, balance):
+    def __init__(self, statementName, totalWithdraw, totalDeposit, balance, order=0,  transactions = []):
         self.statementName = statementName # string
         self.transactions = transactions # array
         self.totalWithdraw = float(totalWithdraw) # /float
         self.totalDeposit = float(totalDeposit) # float
         self.balance = float(balance) # float
+        self.order = order
 
 
     def sumWithdraw(self):
@@ -26,44 +27,49 @@ class statement:
         self.balance = self.totalWithdraw + self.totalDeposit
 
     def addTransaction(self, transaction):
-       self.transactions.append(transaction)
+        transaction.order = (len(self.transactions) + 1)
+        self.transactions.append(transaction)
 
-    def addCategory(self, name):
-        # create category
-        newCategory = category(name, {}, 0, 0)
-        self.categories.append(newCategory)
+    def removeTransaction(self, order = 0, description = ""): 
+        if order == 0 and description == "":
+            return False
+        
+        transactionIndex = self.getTransactionIndex(order, description)
 
-    def searchCategory(self, catName):
-        for i in range(self.categories):
-            if self.categories[i].name == catName:
-                return i
-        return -1
-
-    def serachTransaction(self, transDescription):
-        for i in range(self.transactions):
-            if self.transactions[i].description == transDescription:
-                return i
-        return -1
-   
-    def removeTransaction(self, ):  
-        return 0 #TODO
-    def removeCategory(self, hashId):
-        return 0 #TODO
+        if transactionIndex == -1:
+            return False
+        
+        transactionStartOrder = self.transactions[transactionIndex].order
     
-    def addTransactionToCategory(self, ):
-        return 0 #TODO
+        self.transactions.pop(transactionIndex)
 
-    def removeTransactionFromCategory(self):
-        return 0 #TODO
+        for i in range(transactionIndex, len(self.transactions)):
+            self.transactions[i].order = transactionStartOrder
+            transactionStartOrder += 1
+
+        return True
+    def getTransactionIndex(self, order = 0, description = ""):
+        if order > 0 and order <= len(self.transactions):
+            return (order-1)
+
+        elif description != "":
+            #search or Decription, Note Descriptions are not unique
+            for index, transaction in enumerate(self.transactions):
+                if transaction.description == description:
+                    return index
+        
+        return -1
+    def print(self):
+        for transaction in self.transactions:
+            print("#", transaction.order, " ", transaction.description, "\n")
 
 
-# So I need a reliable way to search for transactions and catgeories
-# I will need a way to identify the transaction before I call search()
-# Categories:
-    # Search by name
-    # Requires brute force algortihm
-    # no dups allowed
+
+
+# need way to get transaction index
+# need way to remove transaction
 #Transactions: 
     # Identify them by date and time
     # Create a sorted list
     # better search time
+

@@ -7,19 +7,29 @@ def main():
 
    
     if testTransaction():
-        print("=========Test Transaction Pass=========")
+        print("=========Test Transaction Create Pass=========")
     else:
-        print("=========Test Transaction Failed=========")
+        print("=========Test Transaction Create Failed=========")
 
     if testStatement():
-        print("=========Test Statement Pass=========")
+        print("=========Test Statement Add Pass=========")
     else:
-        print("=========Test Statement Failed=========")
+        print("=========Test Statement Add Failed=========")
+
+    if testStatementTransaction():
+        print("=========Test Statement Remove Pass=========")
+    else:
+        print("=========Test Statement Remove Failed=========")
 
     if testAccount():
-        print("=========Test Account Pass=========")
+        print("=========Test Account Add Pass=========")
     else:
-        print("=========Test Account Failed=========")
+        print("=========Test Account Add Failed=========")
+
+    if testAccountStatement():
+        print("=========Test Account Remove Pass=========")
+    else:
+        print("=========Test Account Remove Failed=========")
     
     
     
@@ -56,7 +66,7 @@ def testCategory():
 def testAccount():
     res = True
 
-    accountOne = account("accountOne", [])
+    accountOne = account("accountOne", 0, [])
     if accountOne.accountName != "accountOne":
         return False
     transactionOne = transaction("01/07/2023", "01:05:23", 700, "deposit", "This is a test")
@@ -64,7 +74,7 @@ def testAccount():
     transactionThree = transaction("01/09/2023", "01:05:23", -50, "withdraw", "This is a test")
     transactionFour = transaction("01/10/2023", "01:05:23", -100, "withdraw", "This is a test")
     transactionFive = transaction("01/11/2023", "01:05:23", 200, "deposit", "This is a test")
-    statementOne = statement("statement One", [], 0,0,0)
+    statementOne = statement("statement One", 0,0,0,0)
     statementOne.addTransaction(transactionOne)
     statementOne.addTransaction(transactionTwo)
     accountOne.addStatement(statementOne)
@@ -88,6 +98,35 @@ def testAccount():
 
 
     return res
+
+def testAccountStatement():
+    accountOne = account("accountOne",0, [])
+    statementOne = statement("April-May 2023 Statement", 0,0,0,order = 0, transactions = [])
+    statementTwo = statement("May-June 2023 Statement", 0,0,0,order = 0, transactions = [])
+    statementThree = statement("June-July 2023 Statement", 0,0,0,order = 0, transactions = [])
+    statementFour = statement("July-August 2023 Statement", 0,0,0,order = 0, transactions = [])
+    statementFive = statement("August-September 2023 Statement", 0,0,0,order = 0, transactions = [])
+    accountOne.addStatement(statementOne)
+    accountOne.addStatement(statementTwo)
+    accountOne.addStatement(statementThree)
+    accountOne.addStatement(statementFour)
+    accountOne.addStatement(statementFive)
+
+    if len(accountOne.statements) != 5:
+        return False
+    
+    accountOne.removeStatement(3)
+
+    if len(accountOne.statements) != 4:
+        return False
+
+    accountOne.removeStatement(name="April-May 2023 Statement")
+
+    if len(accountOne.statements) != 3:
+        return False
+    return True
+
+
 def testStatement():
     res = True
 
@@ -96,7 +135,7 @@ def testStatement():
     transactionThree = transaction("01/09/2023", "01:05:23", -50, "withdraw", "This is a test")
     transactionFour = transaction("01/10/2023", "01:05:23", -100, "withdraw", "This is a test")
     transactionFive = transaction("01/11/2023", "01:05:23", 200, "deposit", "This is a test")
-    statementOne = statement("statement One", [], 0,0,0)
+    statementOne = statement("statement One", 0,0,0, order = 0, transactions = [])
 
     if statementOne.statementName != "statement One":
         return False
@@ -123,6 +162,40 @@ def testStatement():
     
     return res
 
+def testStatementTransaction():
+    res = True
+
+    transactionOne = transaction("01/07/2023", "01:05:23", 700, "deposit", "This is a test One")
+    transactionTwo = transaction("01/08/2023", "01:05:23", 900, "deposit", "This is a test Two")
+    transactionThree = transaction("01/09/2023", "01:05:23", -50, "withdraw", "This is a test Three")
+    transactionFour = transaction("01/10/2023", "01:05:23", -100, "withdraw", "This is a test Four")
+    transactionFive = transaction("01/11/2023", "01:05:23", 200, "deposit", "This is a test Five")
+    statementOne = statement("statement One", 0,0,0, order = 0, transactions = [])
+
+    if statementOne.statementName != "statement One":
+        return False
+
+    statementOne.addTransaction(transactionOne)
+    statementOne.addTransaction(transactionTwo)
+    statementOne.addTransaction(transactionThree)
+    statementOne.addTransaction(transactionFour)
+    statementOne.addTransaction(transactionFive)
+
+    if len(statementOne.transactions) != 5:
+        return False
+    
+    statementOne.removeTransaction(order = 2)
+    
+    if len(statementOne.transactions) != 4:
+        return False
+    
+    statementOne.removeTransaction(description= "This is a test Four")
+
+    if len(statementOne.transactions) != 3:
+        return False
+
+    
+    return res
 
 if __name__ == "__main__":
     main()
