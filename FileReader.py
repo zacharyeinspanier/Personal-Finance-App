@@ -7,22 +7,16 @@ from collections import namedtuple
 def main():
     # usage python <filename> <filetype>
     if len(sys.argv) != 2:
-        sys.exit("Usage: python Personal_Finance.py <filename>")
+        sys.exit("Usage: python FileReader.py <filename>")
 
     fileName = sys.argv[1]
- 
-    fileType = namedtuple("fileType", ["fileName", "endsWith", "statement"])
 
     if fileName.endswith(".csv"):
         statement = parseCVS(fileName)
-        file = fileType(fileName, "csv", statement) # is this needed
     else:
         sys.exit("This is not a .csv or .pdf file")
     
-    newStat = castAmount(file.statement)
-    print(newStat)
-    # the next step is to take the statment and separate it to withdraw and deposit
-    # do addition and save the file
+    newStat = castAmount(statement)
 
 
 def castAmount(statement = []):

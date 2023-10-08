@@ -1,0 +1,29 @@
+Class for Account
+    Prams: 
+        Account_Name
+        Statements
+        Number_of_Statements
+
+Class for statment
+    Prams:
+        Statement_Name
+        transactions
+        Total_withdraw
+        Total_deposit
+        Categories
+Class for Transaction
+    Prams:
+        Date
+        Time
+        Amount
+        Type
+        Description
+
+Class for Categories
+    Prams:
+        Catgeorie_Name
+        transactions
+        Total_withdraw
+        Total_deposit
+
+
