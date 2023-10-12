@@ -30,7 +30,11 @@ def main():
         print("=========Test Account Remove Pass=========")
     else:
         print("=========Test Account Remove Failed=========")
-    
+        
+    if testCreateStatement():
+        print("=========Test Add Transaction List Pass=========")
+    else:
+        print("=========Test Add Transaction List  Failed=========")
     
     
 def testTransaction():
@@ -58,7 +62,9 @@ def testTransaction():
     else:
         res = False
         return res
-        
+    
+    del transactionOne
+    del transactionTwo
     return res
 
 def testCategory():
@@ -96,7 +102,7 @@ def testAccount():
     if accountOne.statements[0].balance != 1650:
         return False
 
-
+    accountOne.delete()
     return res
 
 def testAccountStatement():
@@ -124,6 +130,7 @@ def testAccountStatement():
 
     if len(accountOne.statements) != 3:
         return False
+    accountOne.delete()
     return True
 
 
@@ -159,6 +166,8 @@ def testStatement():
 
     if statementOne.balance != 1650:
        return False
+
+    statementOne.delete()
     
     return res
 
@@ -194,7 +203,25 @@ def testStatementTransaction():
     if len(statementOne.transactions) != 3:
         return False
 
-    
+    statementOne.delete()
+    return res
+
+def testCreateStatement():
+    res = True
+    transactions_new = [{ "date": "01/07/2023", "time": "01:05:23", "amount": 700, "type": "deposit", "description": "This is a test One"},
+    { "date": "01/08/2023", "time": "01:05:23","amount": 900, "type": "deposit", "description": "This is a test Two"},
+    { "date": "01/09/2023", "time": "01:05:23", "amount": -50, "type": "withdraw", "description": "This is a test Three"},
+    { "date": "01/10/2023", "time": "01:05:23", "amount": -100, "type": "withdraw", "description": "This is a test Four"},
+    { "date": "01/11/2023", "time": "01:05:23", "amount": 200, "type": "deposit", "description": "This is a test Five"}]
+
+    account_new = account("account_new",0, [])
+    account_new.createStatement(transactions_new, name = "Statement from today")
+
+    if len(account_new.statements) != 1 or len(account_new.statements[0].transactions) != 5:
+        res = False
+        return res
+
+    account_new.delete()
     return res
 
 if __name__ == "__main__":

@@ -1,6 +1,5 @@
 Stories/Items Backlog:
     1: create additional class to hold each account, or maybe just an array
-    2: Allow Array of trnsactions to be added all at once
     3: First make program command line program
         Print out each Account
         Print out each statment, withdraw, deposit, balance
@@ -11,11 +10,13 @@ Stories/Items Backlog:
    
     
 Story Refinement:
-    1:
+
     2:
     3:
 
 In-Progress:
-    Allow user to remove statments and transactions
+    
 
 Closed/Complete
+    Allow user to remove statments and transactions
+    Allow Array of trnsactions to be added all at once, refactor file reader to be called by other classes

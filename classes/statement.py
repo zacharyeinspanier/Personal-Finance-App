@@ -4,7 +4,7 @@ import random
 
 class statement:
 
-    def __init__(self, statementName, totalWithdraw, totalDeposit, balance, order=0,  transactions = []):
+    def __init__(self, statementName, totalWithdraw = 0, totalDeposit = 0, balance = 0, order=0,  transactions = []):
         self.statementName = statementName # string
         self.transactions = transactions # array
         self.totalWithdraw = float(totalWithdraw) # /float
@@ -64,12 +64,21 @@ class statement:
             print("#", transaction.order, " ", transaction.description, "\n")
 
 
+    def createTransActions(self, transactions):
+        
+        for currTransaction in transactions:
+            newTransaction = transaction()
+            for key in currTransaction.keys():
+                attr = str(key)
+                setattr(newTransaction, attr, currTransaction[key])
+            self.addTransaction(newTransaction)
+        return 0
 
-
-# need way to get transaction index
-# need way to remove transaction
-#Transactions: 
-    # Identify them by date and time
-    # Create a sorted list
-    # better search time
-
+    def changeStatementName(self, newName):
+        self.statementName = newName
+        
+    def delete(self):
+        while len(self.transactions) > 0:
+            deleteTrans = self.transactions.pop()
+            del deleteTrans
+        

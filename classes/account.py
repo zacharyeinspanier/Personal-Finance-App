@@ -47,6 +47,18 @@ class account:
                     return index
         return -1
 
+    def createStatement(self, transactions, name = "default"):
+        newStatement = statement(name)
+        newStatement.sumWithdraw()
+        newStatement.sumDeposit()
+        newStatement.createTransActions(transactions)
+        self.addStatement(newStatement)
+        
+    def delete(self):
+        while len(self.statements) > 0:
+            deleteStmnt = self.statements.pop()
+            deleteStmnt.delete()
+            del deleteStmnt
     def print(self):
         for statement in self.statements:
             print("#", statement.order, " ", statement.statementName, "\n")
