@@ -7,9 +7,10 @@ import os
 from typing_extensions import Annotated
 
 from classes.account import *
+from StatementReader import StatementReader
 
 accounts = []
-app = typer.Typer()
+app = typer.Typer(rich_markup_mode="rich")
 PICKELFILE = "PersonalFinanceData.pkl"
 
 """    Statement
@@ -53,6 +54,8 @@ def DeletetAccount(placement: Annotated[int, typer.Argument(help="The account pl
     else:
         accounts[placement-1].delete()
         accounts.pop(placement-1)
+        for i in range(placement-1, len(accounts)):
+            accounts[i].order = i+1
         MemoryUpdate()
     return True
 
@@ -72,9 +75,16 @@ def PrintAccountContent(placement: Annotated[int, typer.Argument(help="The accou
         return False
     else:
         print("============================")
-        print("=========={accounts[placement-1].accountName}==========")
+        print("======",accounts[placement-1].accountName,"========")
+        
         print("============================")
-        accounts[placement-1].print()
+        for statement in  accounts[placement-1].statements:
+            print("======",statement.statementName,"========")
+            print("====== Total Deposit",statement.totalDeposit,"========")
+            print("====== Totla Withdraw",statement.totalWithdraw,"========")
+            print("====== Total Balance",statement.balance,"========")
+            statement.print()
+        
     return True
 
 @app.command()
@@ -87,6 +97,22 @@ def PrintAccountList():
     else:
         for account in accounts:
             print("# ", account.order," ", account.accountName)
+
+@app.command()
+def AddNewStatement(
+    statementname: Annotated[str, typer.Argument(help="A name for the statement")] = "",
+    pathtostatement: Annotated[str, typer.Argument(help="A file path to the statement")] = "", 
+    accountplacement: Annotated[int, typer.Argument(help="The account placement number.")]= 0):
+
+    if statementname == "" or pathtostatement == "" or accountplacement == 0:
+        print("Arguments are not valid")
+    elif not os.path.isfile(pathtostatement):
+        print("This file does not exit in the os directory ", pathtostatement)
+    else:
+        newStatement = StatementReader(pathtostatement)
+        #print(newStatement)
+        accounts[accountplacement-1].createStatement(newStatement, name = statementname)
+        MemoryUpdate()
     
 
 @app.command()

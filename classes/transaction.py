@@ -7,4 +7,11 @@ class transaction:
         self.type = type
         self.description = description
         self.order = order
+
+    def parseDictionary(self, transactionDict):
+        for key in transactionDict.keys():
+            keyLower = key.lower()
+            setattr(self, keyLower, transactionDict[key])
+            
+        
         

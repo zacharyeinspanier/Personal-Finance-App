@@ -49,9 +49,8 @@ class account:
 
     def createStatement(self, transactions, name = "default"):
         newStatement = statement(name)
-        newStatement.sumWithdraw()
-        newStatement.sumDeposit()
         newStatement.createTransActions(transactions)
+        newStatement.sumBalance()
         self.addStatement(newStatement)
         
     def delete(self):

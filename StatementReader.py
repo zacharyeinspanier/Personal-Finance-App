@@ -1,22 +1,21 @@
 import csv
 import PyPDF2
 import sys
+import os
 from collections import namedtuple
 
 
-def main():
-    # usage python <filename> <filetype>
-    if len(sys.argv) != 2:
-        sys.exit("Usage: python FileReader.py <filename>")
+def StatementReader(PathToFile):
 
-    fileName = sys.argv[1]
+    fileName = PathToFile
 
     if fileName.endswith(".csv"):
         statement = parseCVS(fileName)
     else:
         sys.exit("This is not a .csv or .pdf file")
     
-    newStat = castAmount(statement)
+    statement = castAmount(statement)
+    return statement
 
 
 def castAmount(statement = []):
@@ -56,13 +55,7 @@ def parsePDF(fileName):
     for i in range(numPages):
         pageObj = pdfReader.pages[i]
         statement += pageObj.extract_text()
-        
-    print(statement)
-    # how do I turn this into a list?
-    # pdfquery 
-    #elif fileName.endswith(".pdf"):
-#parsePDF(fileName)
-#file = fileType(fileName, "pdf")
+
     return statement
     
    

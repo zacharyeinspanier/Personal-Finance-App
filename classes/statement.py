@@ -1,6 +1,7 @@
 from classes.transaction import *
 from classes.category import *
 import random
+import time
 
 class statement:
 
@@ -24,7 +25,7 @@ class statement:
                 self.totalDeposit+= transaction.amount 
                 
     def sumBalance(self):
-        self.balance = self.totalWithdraw + self.totalDeposit
+        self.balance = float(self.totalWithdraw + self.totalDeposit)
 
     def addTransaction(self, transaction):
         transaction.order = (len(self.transactions) + 1)
@@ -61,17 +62,17 @@ class statement:
         return -1
     def print(self):
         for transaction in self.transactions:
-            print("#", transaction.order, " ", transaction.description, "\n")
+            print("#", transaction.order, " Description", transaction.description, " Ammout: ", transaction.amount, "\n")
 
 
     def createTransActions(self, transactions):
-        
         for currTransaction in transactions:
             newTransaction = transaction()
-            for key in currTransaction.keys():
-                attr = str(key)
-                setattr(newTransaction, attr, currTransaction[key])
+            newTransaction.parseDictionary(currTransaction)
             self.addTransaction(newTransaction)
+        self.sumWithdraw()
+        self.sumDeposit()
+        self.sumBalance()
         return 0
 
     def changeStatementName(self, newName):
