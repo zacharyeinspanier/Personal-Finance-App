@@ -7,16 +7,14 @@ import os
 from typing_extensions import Annotated
 
 from classes.account import *
-from StatementReader import StatementReader
+from Scripts.StatementReader import StatementReader
 
 accounts = []
 app = typer.Typer(rich_markup_mode="rich")
-PICKELFILE = "PersonalFinanceData.pkl"
+PICKELFILE = "Pickel_Files\PersonalFinanceData.pkl"
 
 """    Statement
-        Add statement
         Remove statement
-        Print statement and transactions
 
 """
 @app.command()
@@ -103,6 +101,15 @@ def AddNewStatement(
     statementname: Annotated[str, typer.Argument(help="A name for the statement")] = "",
     pathtostatement: Annotated[str, typer.Argument(help="A file path to the statement")] = "", 
     accountplacement: Annotated[int, typer.Argument(help="The account placement number.")]= 0):
+    """
+    This function turns a .csv bank statement into a statement with a list of transactions. 
+    This statement is attached to the account provided in prams
+
+    Prams:
+        statementname: string name for new statement
+        pathtostatement: the string path to the statement file
+        accountplacement: integer of the account to attach the statement to
+    """
 
     if statementname == "" or pathtostatement == "" or accountplacement == 0:
         print("Arguments are not valid")
@@ -110,10 +117,40 @@ def AddNewStatement(
         print("This file does not exit in the os directory ", pathtostatement)
     else:
         newStatement = StatementReader(pathtostatement)
-        #print(newStatement)
         accounts[accountplacement-1].createStatement(newStatement, name = statementname)
         MemoryUpdate()
-    
+
+@app.command()
+def RemoveStatement(accountplacement: Annotated[int, typer.Argument(help="The account placement number.")]= 0,
+    statementplacement: Annotated[int, typer.Argument(help="The statement placement number.")]= 0,
+    statementname: Annotated[str, typer.Argument(help="A name for the statement")] = "" 
+    ):
+    """
+    This function removes a statement from an account.
+
+    Prams:
+        accountplacement: integer representing the account to select
+        statementplacement: integer representing the statement to remove
+        statementname: string representing the name of the statement
+    """
+
+    if len(accounts) == 0:
+        print("There are not accounts created")
+    elif accountplacement > len(accounts) or accountplacement < 1:
+        print("Placement provided is not valid")
+    else:
+        if statementplacement < 1 and statementname == "":
+            print("The statment placement and name do not match a statement")
+            return
+        elif statementname == "" and (statementplacement > len(accounts[accountplacement-1].statements) or statementplacement < 1):
+            print("Statement name and placement do not match a statement")
+        else:
+            res = accounts[accountplacement-1].removeStatement(order = statementplacement, name = statementname)
+            if res:
+                print("statement removed from account: ", accounts[accountplacement-1].accountName)
+            else:
+                print("failed to remove statement")
+            MemoryUpdate()
 
 @app.command()
 def DeleteMemory():

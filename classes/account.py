@@ -18,7 +18,7 @@ class account:
             return False
     
     def removeStatement(self, order = 0, name = ""):
-        if order == 0 and  name == "":
+        if order == 0 and name == "":
             return False
         
         statementIndex = self.getStatementIndex(order, name)

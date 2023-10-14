@@ -1,22 +1,18 @@
 Stories/Items Backlog:
-    1: create additional class to hold each account, or maybe just an array
-    3: First make program command line program
-        Print out each Account
-        Print out each statment, withdraw, deposit, balance
-        print out each transaction
+    1: Document CLI
+    2: create continues program 
     4: Implement categories
     5: Transaction.type is a bool( true for deposit, false for withdraw)
     6: Allow PDF format
    
-    
-Story Refinement:
-
-    2:
-    3:
-
 In-Progress:
     
 
 Closed/Complete
     Allow user to remove statments and transactions
     Allow Array of trnsactions to be added all at once, refactor file reader to be called by other classes
+     create additional class to hold each account, or maybe just an array
+     First make program command line program
+        Print out each Account
+        Print out each statment, withdraw, deposit, balance
+        print out each transaction
