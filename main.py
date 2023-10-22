@@ -9,6 +9,8 @@
 from PyQt6 import QtCore, QtGui, QtWidgets
 
 from classes.PFTreeNode import treeNode
+from Pickel.PickelHelpers import LoadData, MemoryUpdate
+
 
 """
 Ideas:
@@ -84,6 +86,7 @@ Ideas:
 """
 
 HTML =  ["<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\np, li { white-space: pre-wrap; }\nhr { height: 1px; border-width: 0; }\nli.unchecked::marker { content: \"\\2610\"; }\nli.checked::marker { content: \"\\2612\"; }\n</style></head><body style=\" font-family:\'Segoe UI\'; font-size:9pt; font-weight:400; font-style:normal;\">\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:26pt; text-decoration: underline;\">","</span></p></body></html>"]
+PICKELFILE = "PersonalFinanceData.pkl"
 
 class Ui_MainWindow(object):
 
@@ -164,6 +167,9 @@ class Ui_MainWindow(object):
         __sortingEnabled = self.listWidget.isSortingEnabled()
         self.listWidget.setSortingEnabled(False)
         self.listWidget.setSortingEnabled(__sortingEnabled)
+        self.update()
+    
+    
 
 
     def addButton(self):
@@ -247,21 +253,39 @@ class Ui_MainWindow(object):
         return nodeType
 
 
+def closeApp(app, manager):
+    
+    app.exec()
+    # save data to pickle file
+    if manager != None:
+        MemoryUpdate(PICKELFILE, manager)
+
+
+
+
 
 if __name__ == "__main__":
     import sys
-    manager = treeNode(
-        name = "Personal Finance Manager", 
-        withdraw = 0,
-        deposit = 0, 
-        balance = 0,
-        type = "Bank Accounts",
-        children = {},
-        parent = None
+    load = True
+    manager = None
+    if load:
+        manager = LoadData(PICKELFILE)
+    elif manager == None:
+        #create new manager
+        manager = treeNode(
+            name = "Personal Finance Manager", 
+            withdraw = 0,
+            deposit = 0, 
+            balance = 0,
+            type = "Bank Accounts",
+            children = {},
+            parent = None
         )
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow(manager)
     ui.setupUi(MainWindow)
     MainWindow.show()
-    sys.exit(app.exec())
+
+    sys.exit(closeApp(app, manager))
+    
