@@ -1,12 +1,14 @@
-from classes.statement import *
+from statement import *
 import array as arr 
 
 class account:
 
-    def __init__(self, accountName, order=0, statements = []):
+    def __init__(self, accountName, order=0, statements = [], parent = None):
         self.accountName = accountName
         self.statements = statements
         self.order = order
+        self.parent = parent
+        self.listTitle = "Statements"
 
     def addStatement(self, statement):
         # check for dups
@@ -58,6 +60,7 @@ class account:
             deleteStmnt = self.statements.pop()
             deleteStmnt.delete()
             del deleteStmnt
+    
     def print(self):
         for statement in self.statements:
             print("#", statement.order, " ", statement.statementName, "\n")

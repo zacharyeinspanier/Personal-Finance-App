@@ -1,7 +1,5 @@
-from classes.transaction import *
-from classes.category import *
-import random
-import time
+from transaction import *
+
 
 class statement:
 
@@ -43,12 +41,13 @@ class statement:
         transactionStartOrder = self.transactions[transactionIndex].order
     
         self.transactions.pop(transactionIndex)
-
+        #adjust order after remove
         for i in range(transactionIndex, len(self.transactions)):
             self.transactions[i].order = transactionStartOrder
             transactionStartOrder += 1
 
         return True
+
     def getTransactionIndex(self, order = 0, description = ""):
         if order > 0 and order <= len(self.transactions):
             return (order-1)
@@ -60,10 +59,6 @@ class statement:
                     return index
         
         return -1
-    def print(self):
-        for transaction in self.transactions:
-            print("#", transaction.order, " Description", transaction.description, " Ammout: ", transaction.amount, "\n")
-
 
     def createTransActions(self, transactions):
         for currTransaction in transactions:
@@ -83,3 +78,9 @@ class statement:
             deleteTrans = self.transactions.pop()
             del deleteTrans
         
+    def print(self):
+        for transaction in self.transactions:
+            print("#", transaction.order, " Description", transaction.description, " Ammout: ", transaction.amount, "\n")
+
+
+    

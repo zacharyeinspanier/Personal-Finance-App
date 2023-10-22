@@ -1,18 +1,18 @@
-Stories/Items Backlog:
-    1: Document CLI
-    2: create continues program 
-    4: Implement categories
-    5: Transaction.type is a bool( true for deposit, false for withdraw)
-    6: Allow PDF format
-   
-In-Progress:
-    
+Tasks:
+    High Priority: 
+        Allow user to enter name for account and statement
+        save data structure to pickle file
 
-Closed/Complete
-    Allow user to remove statments and transactions
-    Allow Array of trnsactions to be added all at once, refactor file reader to be called by other classes
-     create additional class to hold each account, or maybe just an array
-     First make program command line program
-        Print out each Account
-        Print out each statment, withdraw, deposit, balance
-        print out each transaction
+
+    Medium Priority: 
+        Remove Account/statement button
+        Transaction data page. Display all information about a transaction. Hide add button and list
+
+    
+    
+    Low Priority: 
+        Reduce item list run time. Currently loops through all child elements on add()
+
+DONE
+    Add back button
+    update button names

@@ -6,7 +6,7 @@ import pickle
 import os
 from typing_extensions import Annotated
 
-from classes.account import *
+from .classes.account import *
 from Scripts.StatementReader import StatementReader
 
 accounts = []
