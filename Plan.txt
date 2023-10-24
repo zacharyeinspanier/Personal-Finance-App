@@ -1,18 +1,34 @@
-Tasks:
-    High Priority: 
-        Allow user to enter name for account and statement
-        save data structure to pickle file
-
-
-    Medium Priority: 
-        Remove Account/statement button
-        Transaction data page. Display all information about a transaction. Hide add button and list
+Inprogress:
 
     
+
+
+Backlog
+    Allow user to select csv file
+    Integrate file reader to program
+    Hide and display widgets depending on the node type
+    Display: withdraw, deposit, and total
     
-    Low Priority: 
-        Reduce item list run time. Currently loops through all child elements on add()
+    
+    Remove Account/statement button -> LATER: this will not be too hard, just need to delete all children and current node
+    Transactions will just be a dictionary, not a class
+        When selected: items will be displayed as "Key: value" in text box
+        Hide items for list and add 
+    Transaction data page. Display all information about a transaction. Hide add button and list
+    Reduce item list run time. Currently loops through all child elements on add()
+
+Investigate and decide 
+    Do I need Parent and manager in the UI class?
+    Potentially an obsterver design pattern?
+    Main.py calls class for PyQt?
+
+
 
 DONE
     Add back button
     update button names
+    Allow user to enter name for account and statement
+    save data structure to pickle file
+    Print success and error messages
+    Allow user to create new or select saved pickle file(30 min)
+    Create save button for pickle file(30 min)

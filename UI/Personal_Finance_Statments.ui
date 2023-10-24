@@ -53,7 +53,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
    <widget class="QPushButton" name="addAccount">
     <property name="geometry">
      <rect>
-      <x>360</x>
+      <x>470</x>
       <y>520</y>
       <width>221</width>
       <height>71</height>
@@ -126,6 +126,19 @@ background-color: rgb(255, 255, 255)</string>
       <string>statement 3</string>
      </property>
     </item>
+   </widget>
+   <widget class="QLineEdit" name="lineEdit">
+    <property name="geometry">
+     <rect>
+      <x>270</x>
+      <y>520</y>
+      <width>191</width>
+      <height>71</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color:rgb(255, 255, 255)</string>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">

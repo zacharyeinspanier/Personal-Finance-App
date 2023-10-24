@@ -7,10 +7,20 @@
 
 
 from PyQt6 import QtCore, QtGui, QtWidgets
+import argparse
+import sys
+import os
 
 from classes.PFTreeNode import treeNode
 from Pickel.PickelHelpers import LoadData, MemoryUpdate
 
+parser = argparse.ArgumentParser(
+                    prog='Personal Finance App',
+                    description='Enter bank statements for tracking spending',
+                    epilog='Usage: python main.py --data=[new | load] --file = [pickel file].pkl')
+
+parser.add_argument("--data", choices = ["new", "load"], default = "new") 
+parser.add_argument("--pfile", default = "Pickel/newPickelFile.pkl") 
 
 """
 Ideas:
@@ -86,14 +96,14 @@ Ideas:
 """
 
 HTML =  ["<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\np, li { white-space: pre-wrap; }\nhr { height: 1px; border-width: 0; }\nli.unchecked::marker { content: \"\\2610\"; }\nli.checked::marker { content: \"\\2612\"; }\n</style></head><body style=\" font-family:\'Segoe UI\'; font-size:9pt; font-weight:400; font-style:normal;\">\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:26pt; text-decoration: underline;\">","</span></p></body></html>"]
-PICKELFILE = "PersonalFinanceData.pkl"
+
 
 class Ui_MainWindow(object):
 
-    def __init__(self, manager = None):
+    def __init__(self, savePfile, manager = None ):
         self.parent = None
         self.manager = manager
-        self.count = 0
+        self.savePfile = savePfile
         self.listHtml = HTML[0] + self.manager.type + " " + self.manager.name + " List" + HTML[1]
         self.titleHtml = HTML[0] + "Personal Finance" + HTML[1]
 
@@ -112,10 +122,22 @@ class Ui_MainWindow(object):
         self.title.setObjectName("title")
 
         self.addBtn = QtWidgets.QPushButton(parent=self.centralwidget) 
-        self.addBtn.setGeometry(QtCore.QRect(360, 520, 221, 71))
+        self.addBtn.setGeometry(QtCore.QRect(470, 520, 221, 71))
 
         self.backBtn = QtWidgets.QPushButton(parent=self.centralwidget) 
         self.backBtn.setGeometry(QtCore.QRect(40, 620, 221, 71))
+
+        self.saveBtn = QtWidgets.QPushButton(parent=self.centralwidget) 
+        self.saveBtn.setGeometry(QtCore.QRect(40, 320, 221, 71))
+
+        self.inputName = QtWidgets.QLineEdit(parent=self.centralwidget)
+        self.inputName.setGeometry(QtCore.QRect(270, 520, 191, 71))
+        self.inputName.setPlaceholderText("Enter a name")
+
+        self.message = QtWidgets.QLabel(parent=self.centralwidget)
+        self.message.setGeometry(QtCore.QRect(665, 680, 400, 25))
+        self.message.setObjectName("messageText")
+
 
         font = QtGui.QFont()
         font.setPointSize(14)
@@ -132,6 +154,18 @@ class Ui_MainWindow(object):
         self.backBtn.setIconSize(QtCore.QSize(19, 19))
         self.backBtn.setObjectName("backButton")
         self.backBtn.clicked.connect(self.backButton)
+
+        self.saveBtn.setFont(font)
+        self.saveBtn.setStyleSheet("background-color: rgb(255, 255, 255)")
+        self.saveBtn.setIconSize(QtCore.QSize(19, 19))
+        self.saveBtn.setObjectName("addButton")
+        self.saveBtn.clicked.connect(self.saveToPKL)
+        
+        self.inputName.setFont(font)
+        self.inputName.setStyleSheet("background-color: rgb(255, 255, 255)")
+        self.inputName.setMaxLength(30)
+        self.inputName.setObjectName("inputTextName")
+       
 
         self.listTitle = QtWidgets.QTextEdit(parent=self.centralwidget)
         self.listTitle.setGeometry(QtCore.QRect(325, 190, 350, 71))
@@ -163,6 +197,8 @@ class Ui_MainWindow(object):
 
         self.backBtn.setText(_translate("MainWindow", "Go Back"))
 
+        self.saveBtn.setText(_translate("MainWindow", "SaveData"))
+
         self.listTitle.setHtml(_translate("MainWindow", self.listHtml))
         __sortingEnabled = self.listWidget.isSortingEnabled()
         self.listWidget.setSortingEnabled(False)
@@ -173,10 +209,21 @@ class Ui_MainWindow(object):
 
 
     def addButton(self):
+        nameFromInput = self.inputName.text()
+
+         """path = "C:/Users"
+        fullpath = os.path.realpath(path)
+       if not QtGui.QDesktopServices.openUrl(QtCore.QUrl.fromLocalFile(fullpath)):
+            print("failed")"""
+
+
+        if nameFromInput == "":
+            self.message.setText("Error: The name field is empty.")
+            return
+
         nodeType = self.getChildType()
-        
         childNode = treeNode(
-            name = "test" +str(self.count), 
+            name = nameFromInput, 
             withdraw = 0,
             deposit = 0, 
             balance = 0,
@@ -185,9 +232,13 @@ class Ui_MainWindow(object):
             parent = self.manager
             )
         res = self.manager.add(childNode)
+
         if not res:
-            print("This name alread exists in the ", nodeType, " list. Enter a new name" )
-        self.count += 1
+            self.message.setText("This name alread exists in the " + nameFromInput + " list. Enter a new name." )
+        else: 
+            self.message.setText("Successfully added " + nameFromInput + " to list.")
+
+        self.inputName.clear()
         self.displayList()
    
     def displayList(self):
@@ -212,7 +263,6 @@ class Ui_MainWindow(object):
             self.parent = self.manager
             self.manager = self.manager.children[key]
             self.update()
-            
             return True
         return False
 
@@ -228,12 +278,12 @@ class Ui_MainWindow(object):
 
     def update(self):
         _translate = QtCore.QCoreApplication.translate
-        self.addBtn.setText(_translate("MainWindow", "Add " + self.getChildType())) # text is depended on the type child node
-        # manger.type , " List: ", manager.name
+        self.addBtn.setText(_translate("MainWindow", "Add " + self.getChildType()))
         self.listHtml = self.listHtml = HTML[0] + self.manager.type + " " + self.manager.name + " List" + HTML[1]
         self.listTitle.setHtml(_translate("MainWindow", self.listHtml))
-        #update display list
         self.listWidget.clear()
+        self.inputName.clear()
+        self.message.clear()
         self.displayList()
     
     def getChildType(self):
@@ -251,28 +301,47 @@ class Ui_MainWindow(object):
             case _:
                 nodeType = "No more Children Allowed"
         return nodeType
-
-
-def closeApp(app, manager):
     
+    def saveToPKL(self):
+        root = self.manager
+        rootParent = self.parent
+
+        while rootParent != None:
+            root = root.parent
+            rootParent = root.parent
+        
+        if root != None and MemoryUpdate(self.savePfile, root):
+            self.message.setText("Successfully saved data to " + self.savePfile)
+        else:
+            self.message.setText("Failed to saved data to " + self.savePfile)
+            
+
+
+
+def closeApp(app, manager, pfile):
     app.exec()
     # save data to pickle file
     if manager != None:
-        MemoryUpdate(PICKELFILE, manager)
-
-
-
+        MemoryUpdate(pfile, manager)
 
 
 if __name__ == "__main__":
-    import sys
-    load = True
-    manager = None
-    if load:
-        manager = LoadData(PICKELFILE)
-    elif manager == None:
-        #create new manager
-        manager = treeNode(
+
+
+    startUpManager = None
+    args = parser.parse_args()
+    if ".pkl" not in args.pfile:
+        sys.exit("The file entered is not a pickel file.")
+    pfile = args.pfile
+
+    # Load pickel
+    if args.data == "load" :
+        startUpManager = LoadData(pfile)
+        if startUpManager == None or not isinstance(startUpManager, treeNode):
+            sys.exit("Pickel file does not have readable data")
+    #Create new manager
+    elif args.data == "new":
+        startUpManager = treeNode(
             name = "Personal Finance Manager", 
             withdraw = 0,
             deposit = 0, 
@@ -281,11 +350,14 @@ if __name__ == "__main__":
             children = {},
             parent = None
         )
+    else:
+        sys.exit("Please enter new or load for data.")
+    
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow(manager)
+    ui = Ui_MainWindow(manager = startUpManager, savePfile = pfile)
     ui.setupUi(MainWindow)
     MainWindow.show()
 
-    sys.exit(closeApp(app, manager))
+    sys.exit(closeApp(app, startUpManager, pfile))
     

@@ -1,4 +1,5 @@
 import pickle
+import pathlib
 import os
 
 
@@ -7,52 +8,84 @@ def LoadData(PICKELFILE):
     This function loads data from the memory file to the list accounts
     If the file does not exist or is empty -> return 
     """
-    
-    if not os.path.isfile(PICKELFILE):
-        print("No memory file to load")
-        return None
-    elif os.path.getsize(PICKELFILE) <= 0:
-        print("Memory file is empty")
-        return None
-    else:
+    if not goodFile(PICKELFILE):
+        return False
+    try:
         with open(PICKELFILE, "rb") as picf:
             dataFromLoad = pickle.load(picf)
             return dataFromLoad
+    except OSError as e:
+        print(e)
+        return None
+
+
  
-def SaveData(PICKELFILE, manager):
+def SaveData(PICKELFILE, data):
     """
     This function handles a memory save.
     It will create the memory file if it des not exist
     Then it will write the list account to the memory
+    Assumes file exists, checked with function goodFile()
     """
-    if not os.path.isfile(PICKELFILE):
-        f = open(PICKELFILE, "x")
-        f.close()
-        print("Memory file created")
-    with open(PICKELFILE, "wb") as picf:
-        pickle.dump(manager, picf) # need way to save manager 
-    print("Memory is saved")
+    try:
+        with open(PICKELFILE, "wb") as picf:
+            pickle.dump(data, picf)
+            return True
+    except OSError as e: 
+        print(e)
+        return False
 
 def DeleteMemory(PICKELFILE):
     """
     This function deletes the contents of a memory file
     If the file does not exist or is empty -> return
+    Assumes file exists, checked with function goodFile()
     """
-    if not os.path.isfile(PICKELFILE):
-        print("Memory File has not been created.")
-        return
-    elif os.path.getsize(PICKELFILE) <= 0:
-        print("Memory file is empty")
-        return 
-    else:
+    # check if file is empty
+    if os.path.getsize(PICKELFILE) <= 0:
+        return True
+    try:
         with open(PICKELFILE, "r+") as picf:
             picf.truncate(0)
-        return
+            return True
+    except OSError as e: 
+        print(e)
+        return False
 
-def MemoryUpdate(PICKELFILE, manager):
+def goodFile(PICKELFILE):
+    """
+    This checks if a file path is good
+
+    Returns:
+        True: if the file exists or can be created
+        False: if the file cannot be created
+    """
+
+    # check that file exists
+    if os.path.isfile(PICKELFILE):
+        return True
+    # check if file path is abs and the path exists
+    if os.path.isabs(PICKELFILE) and not os.path.exists(pathlib.Path(PICKELFILE)):
+        return False
+    try:
+        f = open(PICKELFILE, "x")
+        f.close()
+        return True
+    except OSError as e: 
+        print(e)
+        return False
+    return False
+   
+
+
+def MemoryUpdate(PICKELFILE, data):
     """
     This function handels a memory update. 
     Memory file is cleared then data is written to the file
     """
+    if not goodFile(PICKELFILE):
+        return False
+
     DeleteMemory(PICKELFILE)
-    SaveData(PICKELFILE, manager)
+    return SaveData(PICKELFILE, data)
+    
