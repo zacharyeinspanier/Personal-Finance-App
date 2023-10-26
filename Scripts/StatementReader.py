@@ -30,16 +30,21 @@ def castAmount(statement = []):
 def parseCVS(fileName):
     statement = []
     # open and reading csv
-    with open(fileName, 'r') as file:
-        header = []
-        # remove spaces
-        for key in next(file).split(","):
-            header.append(key.strip())
-        # create dictoaries using stripped header
-        reader = csv.DictReader(file, fieldnames=header)
+    try:
+        with open(fileName, 'r') as file:
+            header = []
+            # remove spaces
+            for key in next(file).split(","):
+                header.append(key.strip())
+            # create dictoaries using stripped header
+            reader = csv.DictReader(file, fieldnames=header)
 
-        for row in reader:
-            statement.append(row)
+            for row in reader:
+                statement.append(row)
+                
+    except OSError as e:
+        print(e)
+        return None
        
     return statement
 

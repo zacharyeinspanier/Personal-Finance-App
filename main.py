@@ -7,12 +7,14 @@
 
 
 from PyQt6 import QtCore, QtGui, QtWidgets
+from PyQt6.QtWidgets import QFileDialog
 import argparse
 import sys
 import os
 
 from classes.PFTreeNode import treeNode
 from Pickel.PickelHelpers import LoadData, MemoryUpdate
+from Scripts.StatementReader import StatementReader
 
 parser = argparse.ArgumentParser(
                     prog='Personal Finance App',
@@ -22,78 +24,6 @@ parser = argparse.ArgumentParser(
 parser.add_argument("--data", choices = ["new", "load"], default = "new") 
 parser.add_argument("--pfile", default = "Pickel/newPickelFile.pkl") 
 
-"""
-Ideas:
-    Use same window but just update the names and display based on what the user clicks
-        Update title
-        update button connection
-        update the manager
-            Dictionary of objets
-            {account: statementManager}
-            {statment: transactionManager}
-            self.manager will be chnaged to the correct manager depending on clicks
-        
-        When an account is clicked in the list, all of the objects are:
-            1: manager becomes the account[i] manager
-            2: item names are set to be the account manager items
-        Data type could be a tree to enable back button
-        EX
-                        All accounts
-                            |
-                        [lsit of all accounts]
-                            |   |   |
-                            [List of statements]
-                            |   |   |
-                            [List of transactions]
-        Each object would have the current object, a parent, and list of children
-        On list item click-> Item becomes the manager and all ui objects are updated to match this item
-        on back button click-> the partent becomes the manager and all ui objects are updated to match partent
-
-        4 classes:
-            1: All accounts manager
-            2: account manager
-            3: statment manager
-            4: transaction manager
-        classes prams:
-            self.parent: single object
-            self. children: list of objects
-            self. title
-            self. list title
-        
-        How do we update the UI??
-        Need to be updated:
-            Title text-> textEdit and textEdit_2
-                Only update the inner text
-            List widget -> listWidget
-                update all times that are being displayed, can be done when the manager is updated
-                change will be simple becuse using manager
-                *** TRIGGER UPDATE: click on list will update everything
-            Add button -> addAccount
-                Update inner text
-                Update the connection
-                Change will be simple because using manager
-            Back button -> back
-                Update inner text
-                Update the connection
-                *** TRIGGER UPDATE: click on button will update everything
-        
-        List item clicked function:
-            Set partent to manager
-            set manager to item clicked
-            update:
-                back button
-                titles
-                add button
-        Back button clicked function:
-            set manager to partent
-            set partement to manager.parent
-            update:
-                back button
-                titles
-                add button
-
-                    
-"""
 
 HTML =  ["<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\np, li { white-space: pre-wrap; }\nhr { height: 1px; border-width: 0; }\nli.unchecked::marker { content: \"\\2610\"; }\nli.checked::marker { content: \"\\2612\"; }\n</style></head><body style=\" font-family:\'Segoe UI\'; font-size:9pt; font-weight:400; font-style:normal;\">\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:26pt; text-decoration: underline;\">","</span></p></body></html>"]
 
@@ -101,7 +31,6 @@ HTML =  ["<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org
 class Ui_MainWindow(object):
 
     def __init__(self, savePfile, manager = None ):
-        self.parent = None
         self.manager = manager
         self.savePfile = savePfile
         self.listHtml = HTML[0] + self.manager.type + " " + self.manager.name + " List" + HTML[1]
@@ -129,6 +58,9 @@ class Ui_MainWindow(object):
 
         self.saveBtn = QtWidgets.QPushButton(parent=self.centralwidget) 
         self.saveBtn.setGeometry(QtCore.QRect(40, 320, 221, 71))
+
+        self.browseBtn = QtWidgets.QPushButton(parent=self.centralwidget) 
+        self.browseBtn.setGeometry(QtCore.QRect(700, 320, 221, 71))
 
         self.inputName = QtWidgets.QLineEdit(parent=self.centralwidget)
         self.inputName.setGeometry(QtCore.QRect(270, 520, 191, 71))
@@ -161,6 +93,13 @@ class Ui_MainWindow(object):
         self.saveBtn.setObjectName("addButton")
         self.saveBtn.clicked.connect(self.saveToPKL)
         
+
+        self.browseBtn.setFont(font)
+        self.browseBtn.setStyleSheet("background-color: rgb(255, 255, 255)")
+        self.browseBtn.setIconSize(QtCore.QSize(19, 19))
+        self.browseBtn.setObjectName("browseFolders")
+        self.browseBtn.clicked.connect(self.browseFiles)
+
         self.inputName.setFont(font)
         self.inputName.setStyleSheet("background-color: rgb(255, 255, 255)")
         self.inputName.setMaxLength(30)
@@ -199,6 +138,8 @@ class Ui_MainWindow(object):
 
         self.saveBtn.setText(_translate("MainWindow", "SaveData"))
 
+        self.browseBtn.setText(_translate("MainWindow", "Open File"))
+
         self.listTitle.setHtml(_translate("MainWindow", self.listHtml))
         __sortingEnabled = self.listWidget.isSortingEnabled()
         self.listWidget.setSortingEnabled(False)
@@ -209,13 +150,12 @@ class Ui_MainWindow(object):
 
 
     def addButton(self):
+
+        if self.manager.type == "SingleTransaction":
+            self.message.setText("Error: Cannot add from here")
+            return
+
         nameFromInput = self.inputName.text()
-
-         """path = "C:/Users"
-        fullpath = os.path.realpath(path)
-       if not QtGui.QDesktopServices.openUrl(QtCore.QUrl.fromLocalFile(fullpath)):
-            print("failed")"""
-
 
         if nameFromInput == "":
             self.message.setText("Error: The name field is empty.")
@@ -258,19 +198,22 @@ class Ui_MainWindow(object):
     def listClick(self, item):
         # as items are deleted need to re structure the keys
         # or need a way to consistantly get keys
+        
+        
         key = item.text()
         if key in self.manager.children:
-            self.parent = self.manager
-            self.manager = self.manager.children[key]
+            #NEED TO FIX
+            if self.manager.children[key].type == "SingleTransaction":
+                return False
+            self.manager = self.manager.children[key] # this is not an object it is a dictionary
             self.update()
             return True
         return False
 
 
     def backButton(self):
-        if self.parent != None:
-            self.manager = self.parent
-            self.parent = self.manager.parent
+        if self.manager.parent != None:
+            self.manager = self.manager.parent
             self.update()
             return True
 
@@ -285,26 +228,74 @@ class Ui_MainWindow(object):
         self.inputName.clear()
         self.message.clear()
         self.displayList()
+        self.updateWidgets()
     
+    def updateWidgets(self):
+        #This will be depended on state
+        match self.manager.type:
+            case "Bank Accounts":
+                self.stateAccout()
+            case "Account":
+                self.stateAccout()
+            case "Statement":
+                self.stateStatement()
+            case "Transactions":
+                self.stateTransactions()
+            case "SingleTransaction":
+                self.stateSingleTransaction()
+            case _:
+                return
+        return
+
+    def stateAccout(self):
+        self.addBtn.show()
+        self.browseBtn.hide()
+        self.inputName.show()
+        self.listTitle.show()
+        self.listWidget.show()
+        return
+    def stateStatement(self):
+        self.addBtn.show()
+        self.browseBtn.hide()
+        self.inputName.show()
+        self.listTitle.show()
+        self.listWidget.show()
+        return
+    def stateTransactions(self):
+        self.addBtn.hide()
+        self.browseBtn.show()
+        self.inputName.hide()
+        self.listTitle.show()
+        self.listWidget.show()
+        return
+    def stateSingleTransaction(self):
+        self.addBtn.hide()
+        self.browseBtn.hide()
+        self.inputName.hide()
+        self.listTitle.show()
+        self.listWidget.hide()
+        return
+
+
+
     def getChildType(self):
         nodeType = ""
         match self.manager.type:
             case "Bank Accounts":
                 nodeType = "Account"
-
             case "Account":
                 nodeType = "Statement"
-
             case "Statement":
-                nodeType = "Transaction"
-
+                nodeType = "Transactions"
+            case "Transactions":
+                nodeType = "SingleTransaction"
             case _:
                 nodeType = "No more Children Allowed"
         return nodeType
     
     def saveToPKL(self):
         root = self.manager
-        rootParent = self.parent
+        rootParent = self.manager.parent
 
         while rootParent != None:
             root = root.parent
@@ -314,6 +305,45 @@ class Ui_MainWindow(object):
             self.message.setText("Successfully saved data to " + self.savePfile)
         else:
             self.message.setText("Failed to saved data to " + self.savePfile)
+
+    def browseFiles(self):
+        dlg = QtWidgets.QFileDialog()
+        fileName = ""
+        if dlg.exec():
+            fileName = dlg.selectedFiles()
+
+        if ".csv" not in fileName[0]:
+            self.message.setText("Failed to open File. Not CSV file")
+            return
+        
+        self.addTransactions( fileName[0])
+
+    def addTransactions(self, fileName):
+        transactions = StatementReader(fileName)        
+        nodeType = self.getChildType()
+        count = 0
+        for transaction in transactions:
+            key = "#" + str(count) + " "
+            if "Date" in transaction:
+                key += transaction["Date"]
+            elif "date"  in transaction:
+                key += transaction["date"]
+            
+            childNode = treeNode(
+            name = key, 
+            withdraw = 0,
+            deposit = 0, 
+            balance = 0,
+            type = nodeType, 
+            children = transaction,
+            parent = self.manager
+            )
+            
+            self.manager.children[key] = childNode
+            count +=1
+        self.displayList()
+        return
+
             
 
 

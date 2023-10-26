@@ -1,0 +1,3 @@
+first the statment needs to be created wiht a name
+then the transactions will need to be parsed from the csv
+Children will be a list of transactions
