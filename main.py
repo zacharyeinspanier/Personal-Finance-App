@@ -25,7 +25,9 @@ parser.add_argument("--data", choices = ["new", "load"], default = "new")
 parser.add_argument("--pfile", default = "Pickel/newPickelFile.pkl") 
 
 
-HTML =  ["<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\np, li { white-space: pre-wrap; }\nhr { height: 1px; border-width: 0; }\nli.unchecked::marker { content: \"\\2610\"; }\nli.checked::marker { content: \"\\2612\"; }\n</style></head><body style=\" font-family:\'Segoe UI\'; font-size:9pt; font-weight:400; font-style:normal;\">\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:26pt; text-decoration: underline;\">","</span></p></body></html>"]
+HTML =  ["<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\np, li { white-space: pre-wrap; }\nhr { height: 1px; border-width: 0; }\nli.unchecked::marker { content: \"\\2610\"; }\nli.checked::marker { content: \"\\2612\"; }\n</style></head><body style=\" font-family:\'Segoe UI\'; font-size:9pt; font-weight:400; font-style:normal;\">\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; text-align: center;\"><span style=\" font-size:22pt; text-decoration: underline; text-align: center;\">","</span></p></body></html>"]
+
+HTML_TRANSACTION =  ["<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\np, li { white-space: pre-wrap; }\nhr { height: 1px; border-width: 0; }\nli.unchecked::marker { content: \"\\2610\"; }\nli.checked::marker { content: \"\\2612\"; }\n</style></head><body style=\" font-family:\'Segoe UI\'; font-size:9pt; font-weight:400; font-style:normal;\">\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:14pt;\">","</span></p></body></html>"]
 
 
 class Ui_MainWindow(object):
@@ -40,12 +42,15 @@ class Ui_MainWindow(object):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(977, 721)
         MainWindow.setStyleSheet("background-color: rgb(229, 229, 229)")
+
         self.centralwidget = QtWidgets.QWidget(parent=MainWindow)
         self.centralwidget.setObjectName("centralwidget")
+
         self.widget = QtWidgets.QWidget(parent=self.centralwidget)
         self.widget.setGeometry(QtCore.QRect(0, 0, 981, 131))
         self.widget.setStyleSheet("background-color: rgb(255, 110, 43)")
         self.widget.setObjectName("widget")
+
         self.title = QtWidgets.QTextEdit(parent=self.widget)
         self.title.setGeometry(QtCore.QRect(350, 30, 281, 71))
         self.title.setObjectName("title")
@@ -57,10 +62,10 @@ class Ui_MainWindow(object):
         self.backBtn.setGeometry(QtCore.QRect(40, 620, 221, 71))
 
         self.saveBtn = QtWidgets.QPushButton(parent=self.centralwidget) 
-        self.saveBtn.setGeometry(QtCore.QRect(40, 320, 221, 71))
+        self.saveBtn.setGeometry(QtCore.QRect(10, 320, 221, 71))
 
         self.browseBtn = QtWidgets.QPushButton(parent=self.centralwidget) 
-        self.browseBtn.setGeometry(QtCore.QRect(700, 320, 221, 71))
+        self.browseBtn.setGeometry(QtCore.QRect(750, 320, 221, 71))
 
         self.inputName = QtWidgets.QLineEdit(parent=self.centralwidget)
         self.inputName.setGeometry(QtCore.QRect(270, 520, 191, 71))
@@ -69,6 +74,22 @@ class Ui_MainWindow(object):
         self.message = QtWidgets.QLabel(parent=self.centralwidget)
         self.message.setGeometry(QtCore.QRect(665, 680, 400, 25))
         self.message.setObjectName("messageText")
+
+        self.transactionTable = QtWidgets.QTableWidget(parent=self.centralwidget) 
+        self.transactionTable.setGeometry(QtCore.QRect(195, 290, 550, 275))
+        self.transactionTable.setObjectName("transactionTable")
+
+        self.listWidget = QtWidgets.QListWidget(parent=self.centralwidget)
+        self.listWidget.setGeometry(QtCore.QRect(350, 290, 256, 192))
+        self.listWidget.setObjectName("listWidget")
+
+        self.transactionDisplay = QtWidgets.QTableWidget(parent=self.centralwidget)
+        self.transactionDisplay.setGeometry(QtCore.QRect(350, 290, 100, 200))
+        self.transactionDisplay.setObjectName("transactionDisplay")
+
+        self.listTitle = QtWidgets.QTextEdit(parent=self.centralwidget)
+        self.listTitle.setGeometry(QtCore.QRect(200, 190, 650, 70))
+        self.listTitle.setObjectName("listTitle")
 
 
         font = QtGui.QFont()
@@ -105,16 +126,12 @@ class Ui_MainWindow(object):
         self.inputName.setMaxLength(30)
         self.inputName.setObjectName("inputTextName")
        
-
-        self.listTitle = QtWidgets.QTextEdit(parent=self.centralwidget)
-        self.listTitle.setGeometry(QtCore.QRect(325, 190, 350, 71))
-        self.listTitle.setObjectName("listTitle")
-        self.listWidget = QtWidgets.QListWidget(parent=self.centralwidget)
-        self.listWidget.setGeometry(QtCore.QRect(350, 290, 256, 192))
-        self.listWidget.setStyleSheet("font: 22pt \"Segoe UI\";\n"
-"background-color: rgb(255, 255, 255)")
-        self.listWidget.setObjectName("listWidget")
+        
+        self.listWidget.setStyleSheet("font: 22pt \"Segoe UI\";\n" "background-color: rgb(255, 255, 255)")
         self.listWidget.itemClicked.connect(self.listClick)
+
+        self.transactionTable.itemClicked.connect(self.listClick)
+
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(parent=MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 977, 22))
@@ -131,24 +148,144 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.title.setHtml(_translate("MainWindow", self.titleHtml))
+        self.listTitle.setHtml(_translate("MainWindow", self.listHtml))
 
         self.addBtn.setText(_translate("MainWindow", "Add Bank Account"))
-
         self.backBtn.setText(_translate("MainWindow", "Go Back"))
-
         self.saveBtn.setText(_translate("MainWindow", "SaveData"))
-
         self.browseBtn.setText(_translate("MainWindow", "Open File"))
 
-        self.listTitle.setHtml(_translate("MainWindow", self.listHtml))
         __sortingEnabled = self.listWidget.isSortingEnabled()
         self.listWidget.setSortingEnabled(False)
         self.listWidget.setSortingEnabled(__sortingEnabled)
         self.update()
     
+    def update(self):
+
+        self.inputName.clear() 
+        #self.message.clear() 
+        _translate = QtCore.QCoreApplication.translate
+        self.addBtn.setText(_translate("MainWindow", "Add " + self.getChildType())) 
+        self.listHtml = self.listHtml = HTML[0] + self.manager.type + " " + self.manager.name + " List" + HTML[1] 
+        self.listTitle.setHtml(_translate("MainWindow", self.listHtml))
+        self.updateListDisplay() 
+        
+        #This will be depended on state
+        match self.manager.type:
+            case "Bank Accounts":
+                self.stateAccout()
+            case "Account":
+                self.stateAccout()
+            case "Statement":
+                self.stateStatement()
+            case "Transactions":
+                self.stateTransactions()
+            case "SingleTransaction":
+                self.stateSingleTransaction()
+            case _:
+                return
+        return
+
+    def stateAccout(self):
+        self.addBtn.show()
+        self.browseBtn.hide()
+        self.transactionDisplay.hide()
+        self.inputName.show()
+        self.listTitle.show()
+        self.listWidget.show()
+        self.transactionTable.hide()
+        return
+    def stateStatement(self):
+        self.addBtn.show()
+        self.browseBtn.hide()
+        self.transactionDisplay.hide()
+        self.inputName.show()
+        self.listTitle.show()
+        self.listWidget.show()
+        self.transactionTable.hide()
+        return
+    def stateTransactions(self):
+        self.addBtn.hide()
+        self.transactionDisplay.hide()
+        self.browseBtn.show()
+        self.inputName.hide()
+        self.listTitle.show()
+        self.listWidget.hide()
+        self.transactionTable.show()
+        return
+    def stateSingleTransaction(self):
+        self.addBtn.hide()
+        self.transactionDisplay.show()
+        self.browseBtn.hide()
+        self.inputName.hide()
+        self.listTitle.show()
+        self.listWidget.hide()
+        self.transactionTable.hide()
+        return
     
+    def updateListDisplay(self):
+        """
+        This function prints the items to the list widget.
 
+        TODO: current the item text is set for each item every time function is called
+            Find a way to only add 1 time to the end of the list widget
+        """
+        self.listWidget.clear() 
+        self.transactionDisplay.clear()
+        self.transactionTable.clear()
+        _translate = QtCore.QCoreApplication.translate
 
+        if self.manager.type == "SingleTransaction":
+            innerText = "" 
+            for key in self.manager.children.keys(): 
+                innerText += str(key) + ": " + str(self.manager.children[key]) + "<br>"
+
+            transaction_display = HTML_TRANSACTION[0]+ innerText + HTML_TRANSACTION[1]
+            self.transactionDisplay.setText(_translate("MainWindow", transaction_display))
+        elif self.manager.type == "Transactions":
+            #set table row
+            #set table column
+            
+            if len(self.manager.children) == 0:
+                self.transactionTable.setRowCount(0) # this is the length of the list
+                self.transactionTable.setColumnCount(0) #this is the length of the keys   
+                return
+            else:
+                # loop through dictionary with index_1
+                # row 0 is all of our keys
+                row = 0
+                col = 0
+                colCount = 0
+                colNames = []
+
+                allTransactions = list(self.manager.children.keys())
+                colCount = len(self.manager.children[allTransactions[0]].children)
+                colNames = list(self.manager.children[allTransactions[0]].children.keys())
+                colNames.insert(0, "Transaction Name")   
+                        
+                self.transactionTable.setRowCount(len(self.manager.children))
+                self.transactionTable.setColumnCount(colCount+1) 
+                self.transactionTable.setHorizontalHeaderLabels(colNames)
+
+                for dict in self.manager.children:
+                    self.transactionTable.setItem(row, col, QtWidgets.QTableWidgetItem(dict))
+                    col+=1
+                    for key in self.manager.children[dict].children:
+                        dict_item = self.manager.children[dict].children[key]
+                        print(dict_item)
+                        self.transactionTable.setItem(row, col, QtWidgets.QTableWidgetItem(str(dict_item)))
+                        col += 1
+                    row += 1
+                    col = 0
+                    
+        else:
+            for i, key in enumerate(self.manager.children.keys()):
+                item = QtWidgets.QListWidgetItem() 
+                self.listWidget.addItem(item) 
+                item = self.listWidget.item(i) 
+                item.setText(_translate("MainWindow", self.manager.children[key].name))
+
+    
     def addButton(self):
 
         if self.manager.type == "SingleTransaction":
@@ -178,105 +315,21 @@ class Ui_MainWindow(object):
         else: 
             self.message.setText("Successfully added " + nameFromInput + " to list.")
 
-        self.inputName.clear()
-        self.displayList()
-   
-    def displayList(self):
-        """
-        This function prints the items to the list widget.
-
-        TODO: current the item text is set for each item every time function is called
-            Find a way to only add 1 time to the end of the list widget
-        """
-        _translate = QtCore.QCoreApplication.translate
-        for i, key in enumerate(self.manager.children.keys()):
-            item = QtWidgets.QListWidgetItem() #create item
-            self.listWidget.addItem(item) # add item to list
-            item = self.listWidget.item(i) # get the item
-            item.setText(_translate("MainWindow", self.manager.children[key].name))# set item text
+        self.update()
     
     def listClick(self, item):
-        # as items are deleted need to re structure the keys
-        # or need a way to consistantly get keys
-        
-        
+        if self.manager.type == "Transactions":
+            print("here", item.text())
+            return
         key = item.text()
         if key in self.manager.children:
-            #NEED TO FIX
-            if self.manager.children[key].type == "SingleTransaction":
-                return False
             self.manager = self.manager.children[key] # this is not an object it is a dictionary
             self.update()
-            return True
-        return False
-
-
+    
     def backButton(self):
         if self.manager.parent != None:
             self.manager = self.manager.parent
             self.update()
-            return True
-
-        return False
-
-    def update(self):
-        _translate = QtCore.QCoreApplication.translate
-        self.addBtn.setText(_translate("MainWindow", "Add " + self.getChildType()))
-        self.listHtml = self.listHtml = HTML[0] + self.manager.type + " " + self.manager.name + " List" + HTML[1]
-        self.listTitle.setHtml(_translate("MainWindow", self.listHtml))
-        self.listWidget.clear()
-        self.inputName.clear()
-        self.message.clear()
-        self.displayList()
-        self.updateWidgets()
-    
-    def updateWidgets(self):
-        #This will be depended on state
-        match self.manager.type:
-            case "Bank Accounts":
-                self.stateAccout()
-            case "Account":
-                self.stateAccout()
-            case "Statement":
-                self.stateStatement()
-            case "Transactions":
-                self.stateTransactions()
-            case "SingleTransaction":
-                self.stateSingleTransaction()
-            case _:
-                return
-        return
-
-    def stateAccout(self):
-        self.addBtn.show()
-        self.browseBtn.hide()
-        self.inputName.show()
-        self.listTitle.show()
-        self.listWidget.show()
-        return
-    def stateStatement(self):
-        self.addBtn.show()
-        self.browseBtn.hide()
-        self.inputName.show()
-        self.listTitle.show()
-        self.listWidget.show()
-        return
-    def stateTransactions(self):
-        self.addBtn.hide()
-        self.browseBtn.show()
-        self.inputName.hide()
-        self.listTitle.show()
-        self.listWidget.show()
-        return
-    def stateSingleTransaction(self):
-        self.addBtn.hide()
-        self.browseBtn.hide()
-        self.inputName.hide()
-        self.listTitle.show()
-        self.listWidget.hide()
-        return
-
-
 
     def getChildType(self):
         nodeType = ""
@@ -293,35 +346,24 @@ class Ui_MainWindow(object):
                 nodeType = "No more Children Allowed"
         return nodeType
     
-    def saveToPKL(self):
-        root = self.manager
-        rootParent = self.manager.parent
-
-        while rootParent != None:
-            root = root.parent
-            rootParent = root.parent
-        
-        if root != None and MemoryUpdate(self.savePfile, root):
-            self.message.setText("Successfully saved data to " + self.savePfile)
-        else:
-            self.message.setText("Failed to saved data to " + self.savePfile)
-
     def browseFiles(self):
         dlg = QtWidgets.QFileDialog()
         fileName = ""
         if dlg.exec():
             fileName = dlg.selectedFiles()
 
-        if ".csv" not in fileName[0]:
+
+        if len(fileName) <= 0 or fileName == "" or ".csv" not in fileName[0]:
             self.message.setText("Failed to open File. Not CSV file")
             return
         
-        self.addTransactions( fileName[0])
+        self.addTransactions(fileName[0])
 
     def addTransactions(self, fileName):
         transactions = StatementReader(fileName)        
         nodeType = self.getChildType()
-        count = 0
+        count = 1
+        
         for transaction in transactions:
             key = "#" + str(count) + " "
             if "Date" in transaction:
@@ -338,12 +380,24 @@ class Ui_MainWindow(object):
             children = transaction,
             parent = self.manager
             )
-            
-            self.manager.children[key] = childNode
-            count +=1
-        self.displayList()
+            if key not in self.manager.children.keys():
+                self.manager.children[key] = childNode
+                count +=1
+        self.update()
         return
 
+    def saveToPKL(self):
+        root = self.manager
+        rootParent = self.manager.parent
+
+        while rootParent != None:
+            root = root.parent
+            rootParent = root.parent
+        
+        if root != None and MemoryUpdate(self.savePfile, root):
+            self.message.setText("Successfully saved data to " + self.savePfile)
+        else:
+            self.message.setText("Failed to saved data to " + self.savePfile)
             
 
 
