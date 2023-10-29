@@ -2,22 +2,18 @@ Inprogress:
 
 
 
-
 Backlog
     
-    
-    Connect transaction table click
-    Display: withdraw, deposit, and total
-    Remove Account/statement button -> LATER: this will not be too hard, just need to delete all children and current node
-    Reduce item list run time. Currently loops through all child elements on add()
     Support manual entry of statements and transactions
+    State could be an object with T/F values for what to show and hide
+
     
     
 
 Investigate and decide 
     Do I need Parent and manager in the UI class?
     Potentially an obsterver design pattern?
-    Main.py calls class for PyQt?
+    
 
 
 
@@ -39,3 +35,9 @@ DONE
     Transaction data page. Display all information about a transaction. Hide add button and list
     Organize update flow
     Transactions Table
+    Connect transaction table click
+    Display: withdraw, deposit, and total
+        Display for statement, account and single transaction
+        single transaction is a dictionary, add must not be called on this state
+    Main.py calls class for PyQt
+    Remove Account/statement button -> LATER: this will not be too hard, just need to delete all children and current node

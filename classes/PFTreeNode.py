@@ -1,17 +1,15 @@
-from classes.transaction import transaction
-
 
 class treeNode:
 
     def __init__(
         self, 
         name: str,
-        withdraw: int, 
-        deposit: int, 
-        balance: int,
+        withdraw: float, 
+        deposit: float, 
+        balance: float,
         type: str,
         children = {},
-        parent = None
+        parent = None,
     ):
         self.name = name
         self.children = children
@@ -21,18 +19,23 @@ class treeNode:
         self.parent = parent
         self.type = type
 
-    def sumWithdraw(self):
+    def sum(self):
+        self.withdraw = 0
+        self.balance = 0
+        self.deposit = 0
+        if not len(self.children) > 0:
+            return
+
         for node in self.children.keys():
-            if self.children[node].withdraw <= 0:
+            if self.children[node].withdraw < 0:
                 self.withdraw += self.children[node].withdraw
 
-    def sumDeposit(self):
-        for node in self.children.keys():
             if self.children[node].deposit  > 0:
                 self.deposit += self.children[node].deposit
-                
-    def sumBalance(self):
+            else:
+                continue
         self.balance = float(self.withdraw + self.deposit)
+        self.hasSum = True
 
     def add(self, node):
         # key would be name
@@ -43,54 +46,13 @@ class treeNode:
             return False
         
 
-    def remove(self, key): 
-        if key in self.children:
-            del self.children[key]
-            return True
+    def removeChildren(self): 
+        # if child is type node then call remove, else deliete
+        deleteItems = list(self.children.keys())
+        for key in deleteItems:  
+            if isinstance(self.children[key], treeNode):
+                deleteItem = self.children.pop(key)
+                deleteItem.removeChildren()
+                del deleteItem
 
-        return False
-
- 
-
-
-
-
-"""
-   def getTransactionIndex(self, order = 0, description = ""):
-        if order > 0 and order <= len(self.transactions):
-            return (order-1)
-
-        elif description != "":
-            #search or Decription, Note Descriptions are not unique
-            for index, transaction in enumerate(self.transactions):
-                if transaction.description == description:
-                    return index
-        
-        return -1
-    def createTransActions(self, transactions):
-        for currTransaction in transactions:
-            newTransaction = transaction()
-            newTransaction.parseDictionary(currTransaction)
-            self.addTransaction(newTransaction)
-        self.sumWithdraw()
-        self.sumDeposit()
-        self.sumBalance()
-        return 0
-
-    def changeStatementName(self, newName):
-        self.statementName = newName
-        
-    def delete(self):
-        while len(self.transactions) > 0:
-            deleteTrans = self.transactions.pop()
-            del deleteTrans
-        
-    def print(self):
-        for transaction in self.transactions:
-            print("#", transaction.order, " Description", transaction.description, " Ammout: ", transaction.amount, "\n")
-
-"""
-
-
-    
-
+        self.children.clear()

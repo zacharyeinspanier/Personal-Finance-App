@@ -1,5 +1,5 @@
 import pickle
-import pathlib
+from pathlib import Path
 import os
 
 
@@ -65,7 +65,7 @@ def goodFile(PICKELFILE):
     if os.path.isfile(PICKELFILE):
         return True
     # check if file path is abs and the path exists
-    if os.path.isabs(PICKELFILE) and not os.path.exists(pathlib.Path(PICKELFILE)):
+    if os.path.isabs(PICKELFILE) and not os.path.exists(os.path.dirname(PICKELFILE)):
         return False
     try:
         f = open(PICKELFILE, "x")
@@ -75,17 +75,20 @@ def goodFile(PICKELFILE):
         print(e)
         return False
     return False
-   
-
 
 def MemoryUpdate(PICKELFILE, data):
     """
     This function handels a memory update. 
     Memory file is cleared then data is written to the file
     """
-    if not goodFile(PICKELFILE):
+    folderPath = Path(PICKELFILE)
+
+    if not goodFile(folderPath):
         return False
 
-    DeleteMemory(PICKELFILE)
-    return SaveData(PICKELFILE, data)
+    DeleteMemory(folderPath)
+    return SaveData(folderPath, data)
+
+
+
     
