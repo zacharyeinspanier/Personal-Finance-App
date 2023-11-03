@@ -20,6 +20,15 @@ WDB_X_POS = 200
 WDB_Y_POS = 200
 
 class Ui_MainWindow(object):
+    """
+    This class is the user interface for displaying information about all treeNodes.
+
+    manager: The current treeNode to display
+    savePfile: Path of save pickel file
+    listHtml: The inner HTML to diplay for the list title
+    titleHtml: The inner HTML to display for the app title
+    """
+
 
     def __init__(self, savePfile, manager = None ):
         self.manager = manager
@@ -28,6 +37,9 @@ class Ui_MainWindow(object):
         self.titleHtml = HTML[0] + "Personal Finance" + HTML[1]
 
     def setupUi(self, MainWindow):
+        """
+        This function declares and sets all of the widgest for the UI. 
+        """
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(977, 721)
         MainWindow.setStyleSheet("background-color: rgb(229, 229, 229)")
@@ -175,6 +187,9 @@ class Ui_MainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
+        """
+        This function sets the inner text for all of the widgest for the UI. 
+        """
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.title.setHtml(_translate("MainWindow", self.titleHtml))
@@ -197,12 +212,17 @@ class Ui_MainWindow(object):
         self.update()
     
     def update(self):
-
+        """
+        This function handels any updates to the widgets displayed. 
+        """
+        
+        # close open window
         if hasattr(self,"renameListWindow"):
             self.renameListWindow.close()
-
+        
         self.inputName.clear() 
         _translate = QtCore.QCoreApplication.translate
+        #set text for titles
         self.addBtn.setText(_translate("MainWindow", "Add " + self.getChildType())) 
         self.listHtml = self.listHtml = HTML[0] + self.manager.name + HTML[1] 
         self.listTitle.setHtml(_translate("MainWindow", self.listHtml))
@@ -211,6 +231,7 @@ class Ui_MainWindow(object):
         if self.manager.type != "SingleTransaction":
             self.manager.sum()
             # if any child not is not summed update hasSum of current node
+        #set text for float display
         self.withdraw.setText("Withdraw: " + str('{:,.2f}'.format(self.manager.withdraw)))
         self.deposit.setText("Deposit: " + str('{:,.2f}'.format(self.manager.deposit)))
         self.balance.setText("Balance: " + str('{:,.2f}'.format(self.manager.balance)))
@@ -233,54 +254,70 @@ class Ui_MainWindow(object):
         return
 
     def stateAccout(self):
-        self.addBtn.show()
+        """
+        This function set the windgest to display for state Account
+        """
+        #hide
         self.browseBtn.hide()
         self.transactionDisplay.hide()
+        self.transactionTable.hide()
+        #show
+        self.addBtn.show()
         self.inputName.show()
         self.listTitle.show()
         self.listWidget.show()
-        self.transactionTable.hide()
-        return
+        
     def stateStatement(self):
-        self.addBtn.show()
+        """
+        This function set the windgest to display for state Statement
+        """
+        #hide
         self.browseBtn.hide()
         self.transactionDisplay.hide()
+        self.transactionTable.hide()
+        #show
+        self.addBtn.show()
         self.inputName.show()
         self.listTitle.show()
         self.listWidget.show()
-        self.transactionTable.hide()
-        return
+        
     def stateTransactions(self):
+        """
+        This function set the windgest to display for state Transactions
+        """
+        #hide
         self.addBtn.hide()
         self.transactionDisplay.hide()
-        self.browseBtn.show()
-        self.inputName.hide()
-        self.listTitle.show()
         self.listWidget.hide()
+        self.inputName.hide()
+        #show
+        self.browseBtn.show()
+        self.listTitle.show()
         self.transactionTable.show()
-        return
+
     def stateSingleTransaction(self):
+        """
+        This function set the windgest to display for state singleTransaction
+        """
+        #hide
         self.addBtn.hide()
-        self.transactionDisplay.show()
         self.browseBtn.hide()
         self.inputName.hide()
-        self.listTitle.show()
         self.listWidget.hide()
         self.transactionTable.hide()
-        return
+        #show
+        self.transactionDisplay.show()
+        self.listTitle.show()
     
     def updateListDisplay(self):
         """
         This function prints the items to the list widget.
-
-        TODO: current the item text is set for each item every time function is called
-            Find a way to only add 1 time to the end of the list widget
         """
         self.listWidget.clear() 
         self.transactionDisplay.clear()
         self.transactionTable.clear()
         _translate = QtCore.QCoreApplication.translate
-
+        # Display for SingleTransaction
         if self.manager.type == "SingleTransaction":
             innerText = "" 
             for key in self.manager.children.keys(): 
@@ -288,10 +325,8 @@ class Ui_MainWindow(object):
 
             transaction_display = HTML_TRANSACTION[0]+ innerText + HTML_TRANSACTION[1]
             self.transactionDisplay.setText(_translate("MainWindow", transaction_display))
+        # Display for Transactions
         elif self.manager.type == "Transactions":
-            #set table row
-            #set table column
-            
             if len(self.manager.children) == 0:
                 self.transactionTable.setRowCount(0) # this is the length of the list
                 self.transactionTable.setColumnCount(0) #this is the length of the keys   
@@ -318,7 +353,7 @@ class Ui_MainWindow(object):
                         col += 1
                     row += 1
                     col = 0
-                    
+        # Display for list         
         else:
             for i, key in enumerate(self.manager.children.keys()):
                 item = QtWidgets.QListWidgetItem() 
@@ -328,6 +363,9 @@ class Ui_MainWindow(object):
 
     
     def addButton(self):
+        """
+        This function handes the addition of a new treeNode
+        """
 
         if self.manager.type == "SingleTransaction":
             self.message.setText("Error: Cannot add from here")
@@ -359,6 +397,9 @@ class Ui_MainWindow(object):
         self.update()
     
     def listClick(self, item):
+        """
+        This function handels user click on a list item
+        """
         self.message.clear()
         if self.manager.type == "Transactions": 
             keyItem = self.transactionTable.item(item.row(), 0)
@@ -372,6 +413,9 @@ class Ui_MainWindow(object):
             self.update()
     
     def backButton(self):
+        """
+        This function handels user click on a back button
+        """
         if self.manager.parent != None:
             self.manager = self.manager.parent
             self.message.clear()
@@ -380,6 +424,9 @@ class Ui_MainWindow(object):
             self.message.setText("Error: no previous page.")
 
     def removeButton(self):
+        """
+        This function handels user click on a remove button
+        """
         if self.manager.parent is not None:
             self.manager.removeChildren()
             manager_pointer = self.manager
@@ -391,12 +438,19 @@ class Ui_MainWindow(object):
             self.message.setText("Error: nothing to remove.")
     
     def editListTitle(self):
+        """
+        This function handels user click on a edit button
+        Opens new UI for display
+        """
         self.renameListWindow = QtWidgets.QWidget()
         self.renameUI = Rename_UI(parent = self)
         self.renameUI.setupUi(self.renameListWindow)
         self.renameListWindow.show()
     
     def changeListName(self, newName = ""):
+        """
+        This function changes the name of the current treeNode
+        """
         if self.manager.parent != None:
             self.manager.parent.children[newName] = self.manager.parent.children.pop(self.manager.name)
         self.manager.name = newName
@@ -406,6 +460,9 @@ class Ui_MainWindow(object):
 
 
     def getChildType(self):
+        """
+        This function return the next type of tree node to create
+        """
         nodeType = ""
         match self.manager.type:
             case "Bank Accounts":
@@ -421,6 +478,9 @@ class Ui_MainWindow(object):
         return nodeType
     
     def browseFiles(self):
+        """
+        This function allows the user to select a new .csv file to parse 
+        """
         dlg = QtWidgets.QFileDialog()
         fileName = ""
         if dlg.exec():
@@ -434,26 +494,25 @@ class Ui_MainWindow(object):
         self.addTransactions(fileName[0])
 
     def addTransactions(self, fileName):
+        """
+        This function handels the parsing and entry of each new transaction
+
+        fileName(str): path of the file to parse
+        """
         transactions = StatementReader(fileName)        
         nodeType = self.getChildType()
-        count = 1
+        count = len(self.manager.children) + 1
         
         for transaction in transactions:
-            key = "#" + str(count) + " "
-            if "Date" in transaction:
-                key += transaction["Date"]
-            elif "date"  in transaction:
-                key += transaction["date"]
-            
+            key = "#" + str(count)
+
             transactionWithdraw = 0
             transactionDeposit = 0
-
 
             if "Amount" in transaction:
                 amount =  transaction["Amount"]
             elif "amount"  in transaction:
                 amount = transaction["amount"]
-
 
             if amount >= 0:
                 transactionDeposit = float(amount)
@@ -480,6 +539,9 @@ class Ui_MainWindow(object):
         return
 
     def saveToPKL(self):
+        """
+        This function handels the savedata button press
+        """
         root = self.manager
         rootParent = self.manager.parent
 

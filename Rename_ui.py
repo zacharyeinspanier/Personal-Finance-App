@@ -2,12 +2,20 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 
 
 class Rename_UI (object):
+    """
+    This class is a user interface for changing the name of a treeNode
+
+    Parent: parent class
+    """
     
     def __init__(self, parent=None):
         self.parent = parent
     
 
     def setupUi(self, Form):
+        """
+        This function declares and sets all of the widgest for the UI. 
+        """
         Form.setObjectName("Rename List")
         Form.resize(331, 212)
         Form.setStyleSheet("background-color:rgb(255, 255, 255)")
@@ -40,6 +48,9 @@ class Rename_UI (object):
           
 
     def retranslateUi(self, Form):
+        """
+        This function sets the inner text for all of the widgest for the UI. 
+        """
         _translate = QtCore.QCoreApplication.translate
         Form.setWindowTitle(_translate("Rename List", "Rename List"))
         self.renameListBtn.setText(_translate("Rename List", "Rename List"))
@@ -47,19 +58,15 @@ class Rename_UI (object):
         self.title.setPlainText(_translate("Rename List", "Rename List"))
 
     def renameClick(self):
+        """
+        This function calls a function from the parent calss to change the name of a treeNode
+        """
         if self.parent != None:
             self.parent.changeListName(newName = self.inputRename.text())
 
     def cancelClick(self):
+        """
+        This function closes the widget
+        """
         self.formObj.close()
 
-    
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    Form = QtWidgets.QWidget()
-    ui = Rename_UI()
-    ui.setupUi(Form)
-    Form.show()
-    sys.exit(app.exec())

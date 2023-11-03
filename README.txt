@@ -1,6 +1,7 @@
 Description:
 This python application allows users to input their bank statments(csv) to track their spending. People often have a few different accounts for their finincal needs (EX: savings, checking, credit). 
 The user can create multiple accound a submit their mmonthy statments for each account. For security, this is a local desktop application to keep bank account information local. 
+
 This application will do the following wiht user bank statements:
     1. Allow user to create create multiple accounts
     2. Allow user to add statments to an account

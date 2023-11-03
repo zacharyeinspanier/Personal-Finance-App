@@ -19,14 +19,18 @@ parser.add_argument("--pfile", default = "Pickel/newPickelFile.pkl")
 
 
 def closeApp(app, manager, pfile):
+    """
+    THis function handels the close of the app
+    """
     app.exec()
     # save data to pickle file
     if manager != None:
         MemoryUpdate(pfile, manager)
 
 if __name__ == "__main__":
-
-
+    """
+    This function is the main function. It create or loads a treeNode and calls the UI.
+    """
     startUpManager = None
     args = parser.parse_args()
     if ".pkl" not in args.pfile:

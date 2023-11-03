@@ -6,6 +6,11 @@ from collections import namedtuple
 
 
 def StatementReader(PathToFile):
+    """
+    This function takes a .csv file and parsces it into a dictionary
+
+    PathToFile(str): path to .csv file
+    """
 
     fileName = PathToFile
 
@@ -19,6 +24,11 @@ def StatementReader(PathToFile):
 
 
 def castAmount(statement = []):
+    """
+    This function find the ammount key in a dictionary and casts it to a float
+
+    statement: dictionary with key and values
+    """
 
     for transaction in statement:
         if "Amount" in transaction:
@@ -28,6 +38,12 @@ def castAmount(statement = []):
 
 
 def parseCVS(fileName):
+    """
+    This function Takes a csv file and parces it into a list of dictionarys
+    
+    fileName(str): path to .csv file
+    """
+
     statement = []
     # open and reading csv
     try:
@@ -49,20 +65,5 @@ def parseCVS(fileName):
     return statement
 
 
-def parsePDF(fileName):    
-    statement = ""
-    pdfFileObj = open(fileName, 'rb')
 
-    pdfReader = PyPDF2.PdfReader(pdfFileObj)
-
-    numPages = len(pdfReader.pages)
-
-    for i in range(numPages):
-        pageObj = pdfReader.pages[i]
-        statement += pageObj.extract_text()
-
-    return statement
     
-   
-if __name__ == "__main__":
-    main()
