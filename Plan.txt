@@ -1,18 +1,15 @@
 Inprogress:
+    Transactions keys are just #n
 
 
 
 Backlog
     
-    Support manual entry of statements and transactions
-    State could be an object with T/F values for what to show and hide
-
     
     
+    smaller back button and highlight when hover
+    Comment every thing
 
-Investigate and decide 
-    Do I need Parent and manager in the UI class?
-    Potentially an obsterver design pattern?
     
 
 
@@ -41,3 +38,8 @@ DONE
         single transaction is a dictionary, add must not be called on this state
     Main.py calls class for PyQt
     Remove Account/statement button -> LATER: this will not be too hard, just need to delete all children and current node
+
+        Support name change
+        Push Edit button 
+        The title changes to editable
+        push save button

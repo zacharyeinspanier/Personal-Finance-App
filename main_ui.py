@@ -1,5 +1,4 @@
 from PyQt6 import QtCore, QtGui, QtWidgets
-#from PyQt6.QtWidgets import QFileDialog
 import argparse
 import sys
 import os
@@ -7,6 +6,7 @@ import os
 from classes.PFTreeNode import treeNode
 from Pickel.PickelHelpers import LoadData, MemoryUpdate
 from Scripts.StatementReader import StatementReader
+from Rename_ui import Rename_UI
 
 HTML =  ["<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\np, li { white-space: pre-wrap; }\nhr {  border:0;}\nli.unchecked::marker { content: \"\\2610\"; }\nli.checked::marker { content: \"\\2612\"; }\n</style></head><body style=\" font-family:\'Segoe UI\'; font-size:9pt; font-weight:400; font-style:normal;\">\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; text-align: center; border : 0px;\"><span style=\" font-size:22pt; text-decoration: underline; text-align: center;\">","</span></p></body></html>"]
 
@@ -14,8 +14,8 @@ HTML_TRANSACTION =  ["<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http:
 
 BTN_Y_POS = 600
 MID_DISP_X_POS = 350 
-TITLE_TABLE_LEN = 650
-TITLE_TABEL_X_POS = 200
+TITLE_TABLE_LEN = 500
+TITLE_TABEL_X_POS = 250
 WDB_X_POS = 200
 WDB_Y_POS = 200
 
@@ -60,6 +60,9 @@ class Ui_MainWindow(object):
         self.browseBtn = QtWidgets.QPushButton(parent=self.centralwidget) 
         self.browseBtn.setGeometry(QtCore.QRect(700, BTN_Y_POS, 221, 71))
 
+        self.editTitle = QtWidgets.QPushButton(parent=self.centralwidget) 
+        self.editTitle.setGeometry(QtCore.QRect(875, 133, 100, 50))
+
         self.inputName = QtWidgets.QLineEdit(parent=self.centralwidget)
         self.inputName.setGeometry(QtCore.QRect(290, 520, 191, 71))
         self.inputName.setPlaceholderText("Enter a name")
@@ -93,7 +96,7 @@ class Ui_MainWindow(object):
         self.transactionTable.setObjectName("transactionTable")
 
         self.listTitle = QtWidgets.QTextEdit(parent=self.centralwidget)
-        self.listTitle.setGeometry(QtCore.QRect(TITLE_TABEL_X_POS, 165, TITLE_TABLE_LEN, 70))
+        self.listTitle.setGeometry(QtCore.QRect(TITLE_TABEL_X_POS, 150, TITLE_TABLE_LEN, 70))
         self.listTitle.setObjectName("listTitle")
         self.listTitle.setStyleSheet("border: 0px")
 
@@ -138,6 +141,12 @@ class Ui_MainWindow(object):
         self.browseBtn.setObjectName("browseFolders")
         self.browseBtn.clicked.connect(self.browseFiles)
 
+        self.editTitle.setFont(font)
+        self.editTitle.setStyleSheet("background-color: rgb(255, 255, 255)")
+        self.editTitle.setIconSize(QtCore.QSize(19, 19))
+        self.editTitle.setObjectName("editTitle")
+        self.editTitle.clicked.connect(self.editListTitle)
+
         self.inputName.setFont(font)
         self.inputName.setStyleSheet("background-color: rgb(255, 255, 255)")
         self.inputName.setMaxLength(30)
@@ -180,6 +189,7 @@ class Ui_MainWindow(object):
         self.saveBtn.setText(_translate("MainWindow", "SaveData"))
         self.browseBtn.setText(_translate("MainWindow", "Open File"))
         self.removeBtn.setText(_translate("MainWindow", "Remove"))
+        self.editTitle.setText(_translate("MainWindow", "Edit"))
 
         __sortingEnabled = self.listWidget.isSortingEnabled()
         self.listWidget.setSortingEnabled(False)
@@ -188,10 +198,13 @@ class Ui_MainWindow(object):
     
     def update(self):
 
+        if hasattr(self,"renameListWindow"):
+            self.renameListWindow.close()
+
         self.inputName.clear() 
         _translate = QtCore.QCoreApplication.translate
         self.addBtn.setText(_translate("MainWindow", "Add " + self.getChildType())) 
-        self.listHtml = self.listHtml = HTML[0] + self.manager.type + " " + self.manager.name + " List" + HTML[1] 
+        self.listHtml = self.listHtml = HTML[0] + self.manager.name + HTML[1] 
         self.listTitle.setHtml(_translate("MainWindow", self.listHtml))
         self.updateListDisplay() 
 
@@ -376,6 +389,20 @@ class Ui_MainWindow(object):
             self.update()
         else:
             self.message.setText("Error: nothing to remove.")
+    
+    def editListTitle(self):
+        self.renameListWindow = QtWidgets.QWidget()
+        self.renameUI = Rename_UI(parent = self)
+        self.renameUI.setupUi(self.renameListWindow)
+        self.renameListWindow.show()
+    
+    def changeListName(self, newName = ""):
+        if self.manager.parent != None:
+            self.manager.parent.children[newName] = self.manager.parent.children.pop(self.manager.name)
+        self.manager.name = newName
+        self.update()
+
+        return 0
 
 
     def getChildType(self):

@@ -8,10 +8,11 @@ def LoadData(PICKELFILE):
     This function loads data from the memory file to the list accounts
     If the file does not exist or is empty -> return 
     """
-    if not goodFile(PICKELFILE):
+    folderPath = Path(PICKELFILE)
+    if not goodFile(folderPath):
         return False
     try:
-        with open(PICKELFILE, "rb") as picf:
+        with open(folderPath, "rb") as picf:
             dataFromLoad = pickle.load(picf)
             return dataFromLoad
     except OSError as e:
