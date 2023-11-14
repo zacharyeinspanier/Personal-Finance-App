@@ -1,0 +1,8 @@
+1: redo state to be object
+2: add login
+3: add database to save data
+4: Test different types of csv
+5: Allow pdf
+6: features for PF
+  a: allow categories for items
+  b: display categroeis as percentage of total statement
